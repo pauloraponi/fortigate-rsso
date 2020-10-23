@@ -2,7 +2,7 @@
 A simple tool to create authenticated radius single sign-on users on FortiOS.
 
 ### Requirements and Installation
-Linux with Python 3 and freeradius-utils
+Linux with Python 3, setuptools and pyrad
 
 ### Usage
 Replace the IP_ADDRESS and RAD_SECRET with your FortiGate IP and Radius secret configuration
