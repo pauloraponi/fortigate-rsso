@@ -1,3 +1,7 @@
+# Usage: Change the FGT_IP with FortiGate MGMT interface with 'radius-acct' enabled
+# Change the NET_SIZE with the number of users request for the test
+#
+
 from pyrad.client import Client
 from pyrad.dictionary import Dictionary
 from io import StringIO
@@ -5,6 +9,10 @@ import socket
 import sys
 import pyrad.packet
 import ipaddress
+
+FGT_IP = "10.10.48.36"
+FGT_RAD_SECRET = b"123456"
+NET_SIZE = "10.0.0.0/15"
 
 def SendPacket(srv, req):
     try:
@@ -27,18 +35,16 @@ dict = StringIO("ATTRIBUTE User-Name 1 string\n" +
                 "VALUE Acct-Status-Type Start 1\n" +
                 "VALUE Acct-Status-Type Stop 2")        
 
-srv = Client(server="192.168.3.1", secret=b"123456",
+srv = Client(server=FGT_IP, secret=FGT_RAD_SECRET,
              dict=Dictionary(dict))            
 
 req = srv.CreateAcctPacket(User_Name="teste2")
-
 req["Calling-Station-Id"] = "00-0c-29-44-BE-B8"
 req["Acct-Session-Id"] = "0211a4ef"
-req["Framed-IP-Address"] = "10.0.0.100"
 req["Class"] = "group1"
 req["Acct-Status-Type"] = "Start"
 
-for ip in ipaddress.IPv4Network('192.168.0.0/14'):
+for ip in ipaddress.IPv4Network(NET_SIZE):
     req["Framed-IP-Address"] = "%s" % ip
     print("Sending accounting start packet")
     SendPacket(srv, req)
